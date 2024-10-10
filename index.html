@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Simple Calculator</title>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center ">
+
+    <div class="bg-fuchsia-200 bg-opacity-60 p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-6">Simple Calculator</h1>
+        
+        <!-- First Number -->
+        <div class="mb-4">
+            <label for="firstNumber" class="block text-gray-700 font-semibold mb-2">Số thứ nhất:</label>
+            <input type="text" id="firstNumber" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300" oninput="validateInput(this)">
+            <span id="firstNumberError" class="text-red-500 text-sm"></span>
+        </div>
+
+        <!-- Second Number -->
+        <div class="mb-4">
+            <label for="secondNumber" class="block text-gray-700 font-semibold mb-2">Số thứ hai:</label>
+            <input type="text" id="secondNumber" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300" oninput="validateInput(this)">
+            <span id="secondNumberError" class="text-red-500 text-sm"></span>
+        </div>
+
+        <!-- Operations -->
+        <div class="mb-4">
+            <div class="flex justify-between space-x-2">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="operation" value="add" class="text-blue-500" checked>
+                    <span>Cộng</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="operation" value="subtract" class="text-blue-500">
+                    <span>Trừ</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="operation" value="multiply" class="text-blue-500">
+                    <span>Nhân</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="operation" value="divide" class="text-blue-500">
+                    <span>Chia</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="mb-4">
+            <label for="result" class="block text-gray-700 font-semibold mb-2">Kết quả:</label>
+            <input type="text" id="result" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300" readonly>
+        </div>
+
+        <!-- Calculate Button -->
+        <div class="text-center">
+            <button onclick="calculate()" class="bg-blue-500 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
+                Tính toán
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Kiểm tra giá trị nhập và hiển thị thông báo lỗi nếu không hợp lệ
+        function validateInput(inputElement) {
+            const value = inputElement.value;
+            const errorSpan = inputElement.id === 'firstNumber' ? document.getElementById('firstNumberError') : document.getElementById('secondNumberError');
+            
+            if (isNaN(value) || value.trim() === '') {
+                errorSpan.textContent = 'Giá trị không hợp lệ!';
+            } else {
+                errorSpan.textContent = '';
+            }
+        }
+
+        function calculate() {
+            const firstNumber = document.getElementById('firstNumber').value;
+            const secondNumber = document.getElementById('secondNumber').value;
+            const operation = document.querySelector('input[name="operation"]:checked');
+            const resultInput = document.getElementById('result');
+            const firstNumberError = document.getElementById('firstNumberError');
+            const secondNumberError = document.getElementById('secondNumberError');
+
+            // Kiểm tra nếu ô nhập bị trống
+            if (firstNumber.trim() === '' || secondNumber.trim() === '') {
+                if (firstNumber.trim() === '') {
+                    firstNumberError.textContent = 'Số thứ nhất không hợp lệ!';
+                }
+                if (secondNumber.trim() === '') {
+                    secondNumberError.textContent = 'Số thứ hai không hợp lệ!';
+                }
+                resultInput.value = 'Vui lòng nhập giá trị hợp lệ.';
+                return;
+            }
+
+            // Kiểm tra lại giá trị để đảm bảo đã nhập đúng
+            if (firstNumberError.textContent || secondNumberError.textContent) {
+                resultInput.value = 'Vui lòng sửa lỗi trước khi tính.';
+                return;
+            }
+
+            const num1 = parseFloat(firstNumber);
+            const num2 = parseFloat(secondNumber);
+
+            let result;
+            switch (operation.value) {
+                case 'add':
+                    result = num1 + num2;
+                    break;
+                case 'subtract':
+                    result = num1 - num2;
+                    break;
+                case 'multiply':
+                    result = num1 * num2;
+                    break;
+                case 'divide':
+                    if (num2 === 0) {
+                        resultInput.value = 'Không thể chia cho 0!';
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+            }
+
+            resultInput.value = result;
+        }
+    </script>
+
+</body>
+</html>
