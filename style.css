@@ -1,6 +1,6 @@
 body {
     background-image: url('./images/ayaka.jpg');
-    background-size: cover; /* Đảm bảo ảnh bao phủ toàn bộ */
-    background-position: center; /* Căn giữa ảnh */
-    background-repeat: no-repeat; /* Không lặp lại ảnh */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }

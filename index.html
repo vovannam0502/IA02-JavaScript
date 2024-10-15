@@ -9,28 +9,28 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center ">
 
-    <div class="bg-fuchsia-200 bg-opacity-60 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold text-center mb-6">Simple Calculator</h1>
-        
+    <div class="bg-fuchsia-300 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-4">Bé tập tính</h1>
+
         <!-- First Number -->
-        <div class="mb-4">
+        <div class="mb-2">
             <label for="firstNumber" class="block text-gray-700 font-semibold mb-2">Số thứ nhất:</label>
-            <input type="text" id="firstNumber" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300" oninput="validateInput(this)">
-            <span id="firstNumberError" class="text-red-500 text-sm"></span>
+            <input type="text" id="firstNumber" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300" oninput="validateInput(this)" onblur="validateOnBlur(this)">
+            <span id="firstNumberError" class="text-red-500 text-sm mt-1 min-h-[20px] block"></span>
         </div>
 
         <!-- Second Number -->
-        <div class="mb-4">
+        <div class="mb-2">
             <label for="secondNumber" class="block text-gray-700 font-semibold mb-2">Số thứ hai:</label>
-            <input type="text" id="secondNumber" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300" oninput="validateInput(this)">
-            <span id="secondNumberError" class="text-red-500 text-sm"></span>
+            <input type="text" id="secondNumber" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300" oninput="validateInput(this)" onblur="validateOnBlur(this)">
+            <span id="secondNumberError" class="text-red-500 text-sm mt-1 min-h-[20px] block"></span>
         </div>
 
         <!-- Operations -->
-        <div class="mb-4">
+        <div class="mb-2">
             <div class="flex justify-between space-x-2">
                 <label class="flex items-center space-x-2">
-                    <input type="radio" name="operation" value="add" class="text-blue-500" checked>
+                    <input type="radio" name="operation" value="add" class="text-blue-500">
                     <span>Cộng</span>
                 </label>
                 <label class="flex items-center space-x-2">
@@ -60,18 +60,31 @@
                 Tính toán
             </button>
         </div>
+
+        <!-- Notification -->
+        <div id="notification" class="text-red-500 text-sm mt-1 min-h-[20px]"></div>
     </div>
 
     <script>
-        // Kiểm tra giá trị nhập và hiển thị thông báo lỗi nếu không hợp lệ
         function validateInput(inputElement) {
             const value = inputElement.value;
             const errorSpan = inputElement.id === 'firstNumber' ? document.getElementById('firstNumberError') : document.getElementById('secondNumberError');
             
-            if (isNaN(value) || value.trim() === '') {
-                errorSpan.textContent = 'Giá trị không hợp lệ!';
+            if (isNaN(parseFloat(value)) || value.trim() === '') {
+                errorSpan.textContent = 'Giá trị không hợp lệ';
             } else {
                 errorSpan.textContent = '';
+            }
+        }
+
+        function validateOnBlur(inputElement) {
+            validateInput(inputElement);
+            const notification = document.getElementById('notification');
+            const errorText = document.getElementById(inputElement.id + 'Error').textContent;
+            if (errorText) {
+                notification.textContent = 'Lỗi: ' + errorText;
+            } else {
+                notification.textContent = '';
             }
         }
 
@@ -82,22 +95,29 @@
             const resultInput = document.getElementById('result');
             const firstNumberError = document.getElementById('firstNumberError');
             const secondNumberError = document.getElementById('secondNumberError');
+            const notification = document.getElementById('notification');
 
-            // Kiểm tra nếu ô nhập bị trống
             if (firstNumber.trim() === '' || secondNumber.trim() === '') {
                 if (firstNumber.trim() === '') {
-                    firstNumberError.textContent = 'Số thứ nhất không hợp lệ!';
+                    firstNumberError.textContent = 'Số thứ nhất không hợp lệ';
                 }
                 if (secondNumber.trim() === '') {
-                    secondNumberError.textContent = 'Số thứ hai không hợp lệ!';
+                    secondNumberError.textContent = 'Số thứ hai không hợp lệ';
                 }
-                resultInput.value = 'Vui lòng nhập giá trị hợp lệ.';
+                notification.textContent = 'Nhập hai số hợp lệ';
+                resultInput.value = '';
                 return;
             }
 
-            // Kiểm tra lại giá trị để đảm bảo đã nhập đúng
             if (firstNumberError.textContent || secondNumberError.textContent) {
-                resultInput.value = 'Vui lòng sửa lỗi trước khi tính.';
+                notification.textContent = 'Sửa lỗi trước khi tính toán';
+                resultInput.value = '';
+                return;
+            }
+
+            if (!operation) {
+                notification.textContent = 'Chọn một phép tính';
+                resultInput.value = '';
                 return;
             }
 
@@ -117,7 +137,8 @@
                     break;
                 case 'divide':
                     if (num2 === 0) {
-                        resultInput.value = 'Không thể chia cho 0!';
+                        resultInput.value = 'NaN';
+                        notification.textContent = 'Lỗi: Không thể chia cho 0';
                         return;
                     }
                     result = num1 / num2;
@@ -125,8 +146,9 @@
             }
 
             resultInput.value = result;
+            notification.textContent = '';
         }
     </script>
-
+    
 </body>
 </html>
